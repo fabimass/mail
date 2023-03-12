@@ -1,3 +1,23 @@
 textarea {
     min-height: 400px;
 }
+
+.email {
+    border-style: solid;
+    border-width: 2px;
+    margin: 8px;
+}
+
+.email-content {
+    font-family: sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.email-content td {
+    padding: 8px;
+}
+
+.email-unread {
+    font-weight: bold;
+}
