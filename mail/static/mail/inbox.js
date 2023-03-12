@@ -27,7 +27,7 @@ function send_email(event) {
       console.log(result);
 
       // Load sent mailbox
-      load_mailbox('sent')
+      load_mailbox('sent');
   });
 }
 
@@ -46,6 +46,13 @@ function compose_email() {
   document.querySelector('#compose-form').addEventListener('submit', send_email);
 }
 
+function printEmail(email) {
+  const element = document.createElement('div');
+  element.innerHTML = `${email.body}`;
+  
+  document.querySelector('#emails-view').append(element);
+}
+
 function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
@@ -54,4 +61,12 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // Get the emails for the corresponding mailbox
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+      // Print emails
+      emails.forEach(email => printEmail(email));
+  });
 }
