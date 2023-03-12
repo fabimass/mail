@@ -10,6 +10,27 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
+function send_email(event) {
+  event.preventDefault();
+
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+        recipients: document.querySelector('#compose-recipients').value,
+        subject: document.querySelector('#compose-subject').value,
+        body: document.querySelector('#compose-body').value
+    })
+  })
+  .then(response => response.json())
+  .then(result => {
+      // Print result
+      console.log(result);
+
+      // Load sent mailbox
+      load_mailbox('sent')
+  });
+}
+
 function compose_email() {
 
   // Show compose view and hide other views
@@ -20,6 +41,9 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+
+  // Add event listener to form
+  document.querySelector('#compose-form').addEventListener('submit', send_email);
 }
 
 function load_mailbox(mailbox) {
