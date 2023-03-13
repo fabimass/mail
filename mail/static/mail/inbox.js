@@ -49,14 +49,15 @@ function compose_email() {
 function printEmail(email) {
   const element = document.createElement('div');
   const emailTemplate = 
-    `<table class="email-content email-unread">
+    `<table>
         <tr>
           <td>${email.sender}</td>
-          <td>${email.body}</td>
+          <td>${email.subject}</td>
           <td style="text-align: right;">${email.timestamp}</td>
         </tr>
      </table>`
   element.classList.add('email');
+  element.classList.add('new');
   element.innerHTML = emailTemplate;
   
   document.querySelector('#emails-view').append(element);
