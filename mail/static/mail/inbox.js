@@ -36,6 +36,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#single-email-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -44,6 +45,22 @@ function compose_email() {
 
   // Add event listener to form
   document.querySelector('#compose-form').addEventListener('submit', send_email);
+}
+
+function openEmail(id) {
+
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none'
+  document.querySelector('#single-email-view').style.display = 'block';
+
+  fetch(`/emails/${id}`)
+  .then(response => response.json())
+  .then(email => {
+    document.querySelector('#single-email-view').innerHTML = 
+      `<h3>${email.subject}</h3>
+       <p>${email.body}</p>`;
+  });
+
 }
 
 function printEmail(email) {
@@ -56,9 +73,11 @@ function printEmail(email) {
           <td style="text-align: right;">${email.timestamp}</td>
         </tr>
      </table>`
+     
   element.classList.add('email');
-  element.classList.add('new');
+  element.classList.add( (email.read) ? "read" : "new" );
   element.innerHTML = emailTemplate;
+  element.addEventListener('click', () => openEmail(email.id));
   
   document.querySelector('#emails-view').append(element);
 }
@@ -68,6 +87,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#single-email-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
