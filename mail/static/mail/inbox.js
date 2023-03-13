@@ -47,12 +47,14 @@ function compose_email() {
   document.querySelector('#compose-form').addEventListener('submit', send_email);
 }
 
-function openEmail(id) {
+function open_email(id) {
 
+  // Show single email and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none'
   document.querySelector('#single-email-view').style.display = 'block';
 
+  // Get selected email
   fetch(`/emails/${id}`)
   .then(response => response.json())
   .then(email => {
@@ -63,8 +65,10 @@ function openEmail(id) {
 
 }
 
-function printEmail(email) {
+function print_email(email) {
   const element = document.createElement('div');
+  
+  // Create the block of html code that will be injected
   const emailTemplate = 
     `<table>
         <tr>
@@ -73,12 +77,16 @@ function printEmail(email) {
           <td style="text-align: right;">${email.timestamp}</td>
         </tr>
      </table>`
-     
+  element.innerHTML = emailTemplate;
+   
+  // Add some css classes
   element.classList.add('email');
   element.classList.add( (email.read) ? "read" : "new" );
-  element.innerHTML = emailTemplate;
-  element.addEventListener('click', () => openEmail(email.id));
+
+  // Add click event
+  element.addEventListener('click', () => open_email(email.id));
   
+  // Inject email on the view
   document.querySelector('#emails-view').append(element);
 }
 
@@ -97,6 +105,6 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
       // Print emails
-      emails.forEach(email => printEmail(email));
+      emails.forEach(email => print_email(email));
   });
 }
