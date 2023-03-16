@@ -57,12 +57,7 @@ function archive_email(id, to_archive) {
   .then(() => load_mailbox('inbox'));
 }
 
-function open_email(id) {
-
-  // Show single email and hide other views
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'none'
-  document.querySelector('#single-email-view').style.display = 'block';
+function open_email(id, mailbox) {
 
   // Get selected email
   fetch(`/emails/${id}`)
@@ -78,13 +73,15 @@ function open_email(id) {
         <h3>${email.subject}</h3>
         <p>${email.body}</p>
        </div>
-       <div class="d-flex flex-row-reverse">
+       ${ (mailbox != 'sent') ? 
+       `<div class="d-flex flex-row-reverse">
         <button id="archive-button" class="btn btn-primary">${email.archived ? "Unarchive" : "Archive"}</button>
-       </div>`;  
+       </div>` 
+       : '' }`;  
        
       // Add listener for the archive button
-      archiveButton = document.querySelector('#archive-button')
-      archiveButton.addEventListener('click', () => archive_email(email.id, !email.archived));
+      archiveButton = document.querySelector('#archive-button');
+      archiveButton?.addEventListener('click', () => archive_email(email.id, !email.archived));
 
       // Mark email as read
       fetch(`/emails/${id}`, {
@@ -93,11 +90,17 @@ function open_email(id) {
             read: true
         })
       });
+  })
+  .then(() => {
+    // Show single email and hide other views
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none'
+    document.querySelector('#single-email-view').style.display = 'block';
   });
 
 }
 
-function print_email(email) {
+function print_email(email, mailbox) {
   const element = document.createElement('div');
   
   // Create the block of html code that will be injected
@@ -116,7 +119,7 @@ function print_email(email) {
   element.classList.add( (email.read) ? "read" : "new" );
 
   // Add click event
-  element.addEventListener('click', () => open_email(email.id));
+  element.addEventListener('click', () => open_email(email.id, mailbox));
   
   // Inject email on the view
   document.querySelector('#emails-view').append(element);
@@ -137,6 +140,6 @@ function load_mailbox(mailbox) {
   .then(response => response.json())
   .then(emails => {
       // Print emails
-      emails.forEach(email => print_email(email));
+      emails.forEach(email => print_email(email, mailbox));
   });
 }
