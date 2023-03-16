@@ -7,6 +7,10 @@ textarea {
     margin: 8px;
 }
 
+.email:hover {
+    background-color: gainsboro;
+}
+
 .email table {
     font-family: sans-serif;
     border-collapse: collapse;
