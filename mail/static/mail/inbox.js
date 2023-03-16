@@ -61,7 +61,13 @@ function open_email(id) {
     document.querySelector('#single-email-view').innerHTML = 
       `<h3>${email.subject}</h3>
        <p>${email.body}</p>`;
-  });
+  })
+  .then(fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  }));
 
 }
 
