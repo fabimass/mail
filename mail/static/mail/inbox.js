@@ -59,8 +59,14 @@ function open_email(id) {
   .then(response => response.json())
   .then(email => {
     document.querySelector('#single-email-view').innerHTML = 
-      `<h3>${email.subject}</h3>
-       <p>${email.body}</p>`;
+      `<div class="expanded">
+        <p>From: ${email.sender}</p>
+        <p>To: ${email.recipients}</p>
+        <p>Timestamp: ${email.timestamp}</p>
+        <br/>
+        <h3>${email.subject}</h3>
+        <p>${email.body}</p>
+       </div>`;
   })
   .then(fetch(`/emails/${id}`, {
     method: 'PUT',

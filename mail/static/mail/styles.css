@@ -19,6 +19,7 @@ textarea {
 
 .email td {
     padding: 8px;
+    width: 33%;
 }
 
 .new {
@@ -31,4 +32,11 @@ textarea {
     font-weight: normal;
     border-width: 1px;
     background-color: #bfbfbf;
+}
+
+.expanded {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #bfbfbf;
+    padding: 15px;
 }
