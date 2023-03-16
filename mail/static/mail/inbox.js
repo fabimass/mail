@@ -47,6 +47,16 @@ function compose_email() {
   document.querySelector('#compose-form').addEventListener('submit', send_email);
 }
 
+function archive_email(id, to_archive) {
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: to_archive
+    })
+  })
+  .then(() => load_mailbox('inbox'));
+}
+
 function open_email(id) {
 
   // Show single email and hide other views
@@ -57,6 +67,7 @@ function open_email(id) {
   // Get selected email
   fetch(`/emails/${id}`)
   .then(response => response.json())
+  // Construct the email element
   .then(email => {
     document.querySelector('#single-email-view').innerHTML = 
       `<div class="expanded">
@@ -66,14 +77,23 @@ function open_email(id) {
         <br/>
         <h3>${email.subject}</h3>
         <p>${email.body}</p>
-       </div>`;
-  })
-  .then(fetch(`/emails/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-        read: true
-    })
-  }));
+       </div>
+       <div class="d-flex flex-row-reverse">
+        <button id="archive-button" class="btn btn-primary">${email.archived ? "Unarchive" : "Archive"}</button>
+       </div>`;  
+       
+      // Add listener for the archive button
+      archiveButton = document.querySelector('#archive-button')
+      archiveButton.addEventListener('click', () => archive_email(email.id, !email.archived));
+
+      // Mark email as read
+      fetch(`/emails/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            read: true
+        })
+      });
+  });
 
 }
 
