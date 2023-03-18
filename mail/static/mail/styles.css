@@ -5,6 +5,7 @@ textarea {
 .email {
     border-style: solid;
     margin: 8px;
+    cursor: pointer;
 }
 
 .email:hover {

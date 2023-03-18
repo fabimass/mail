@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#inbox').addEventListener('click', () => load_mailbox('inbox'));
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
-  document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose').addEventListener('click', () => compose_email());
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -31,17 +31,17 @@ function send_email(event) {
   });
 }
 
-function compose_email() {
-
+function compose_email(to='', subject='', body='') {
+  
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
   document.querySelector('#single-email-view').style.display = 'none';
 
   // Clear out composition fields
-  document.querySelector('#compose-recipients').value = '';
-  document.querySelector('#compose-subject').value = '';
-  document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-recipients').value = to;
+  document.querySelector('#compose-subject').value = subject;
+  document.querySelector('#compose-body').value = body;
 
   // Add event listener to form
   document.querySelector('#compose-form').addEventListener('submit', send_email);
@@ -55,6 +55,14 @@ function archive_email(id, to_archive) {
     })
   })
   .then(() => load_mailbox('inbox'));
+}
+
+function reply_email(email) {
+
+  // Pre-populates the email form
+  compose_email(email.sender, 
+    `${email.subject.includes('Re:') ? '' : 'Re: '}${email.subject}`, 
+    `On ${email.timestamp} ${email.sender} wrote: \n\n${email.body}`);
 }
 
 function open_email(id, mailbox) {
@@ -74,14 +82,19 @@ function open_email(id, mailbox) {
         <p>${email.body}</p>
        </div>
        ${ (mailbox != 'sent') ? 
-       `<div class="d-flex flex-row-reverse">
+      `<div class="d-flex flex-row-reverse">
         <button id="archive-button" class="btn btn-primary">${email.archived ? "Unarchive" : "Archive"}</button>
+        <button id="reply-button" class="btn btn-primary mx-2">Reply</button>
        </div>` 
        : '' }`;  
        
       // Add listener for the archive button
       archiveButton = document.querySelector('#archive-button');
       archiveButton?.addEventListener('click', () => archive_email(email.id, !email.archived));
+
+      // Add listener for the reply button
+      replyButton = document.querySelector('#reply-button');
+      replyButton?.addEventListener('click', () => reply_email(email));
 
       // Mark email as read
       fetch(`/emails/${id}`, {
